@@ -31,7 +31,7 @@ class Post(models.Model):
     title = models.CharField(max_length=150)
     text = models.TextField()
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE)
