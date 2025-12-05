@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Category, Topic, Post
+import datetime
 
 
 class CategorySerializer(serializers.Serializer):
@@ -17,6 +18,7 @@ class CategorySerializer(serializers.Serializer):
         return instance
 
 
+
 class TopicModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic
@@ -26,4 +28,14 @@ class PostModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['title', 'text', 'topic', 'slug', 'created_at', 'updated_at', 'created_by']
+
+        def validate_name(self, value):
+            if not value.istitle():
+                raise serializers.ValidationError("Nazwa osoby powinna zaczac sie wielka litera")
+            return value
+
+        def validate_creation_date(self, value):
+            if value > datetime.datetime.now():
+                raise serializers.ValidationError("data z przyszlosci")
+            return value
 
