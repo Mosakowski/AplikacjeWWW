@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import Category, Post, Topic
 from .serializers import PostModelSerializer, CategorySerializer, TopicModelSerializer
 import datetime
@@ -72,28 +74,30 @@ def category_list_with_name(request):
     serializer = CategorySerializer(categories, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
-def post_view(request, pk):
-    post = Post.objects.get(title=pk)
-    serializer = PostModelSerializer(post)
-    return Response(serializer.data)
+class PostView(APIView):
+    def get(self,request,pk):
+        post = Post.objects.get(title=pk)
+        serializer = PostModelSerializer(post)
+        return Response(serializer.data)
 
-@api_view(['POST'])
-def post_add(request, data):
-    post = Post.objects.create(title=data['title'], text=data['text'], topic=data['topic'], slug=data['slug'], created_at=datetime.datetime.now(), updated_at=datetime.datetime.now(), created_by=data['created_by'])
-    serializer = PostModelSerializer(post)
-    return Response(serializer.data)
+class PostAdd(APIView):
+    def add(self,request,data):
+        post = Post.objects.create(title=data['title'], text=data['text'], topic=data['topic'], slug=data['slug'],
+                                   created_at=datetime.datetime.now(), updated_at=datetime.datetime.now(),
+                                   created_by=data['created_by'])
+        serializer = PostModelSerializer(post)
+        return Response(serializer.data)
 
-@api_view(['DELETE'])
-def post_delete(request, pk):
-    post = Post.objects.get(title=pk)
-    post.delete()
-    serializer = PostModelSerializer(post)
-    return Response(serializer.data)
 
-@api_view(['GET'])
-def post_list(request):
-    posts = Post.objects.all()
-    serializer = PostModelSerializer(posts, many=True)
-    return Response(serializer.data)
+class PostDelete(APIView):
+    def delete(self,request,pk):
+        post = Post.objects.get(title=pk)
+        post.delete()
+        serializer = PostModelSerializer(post)
+        return Response(serializer.data)
 
+class PostList(APIView):
+    def list(self, request):
+        posts = Post.objects.all()
+        serializer = PostModelSerializer(posts, many=True)
+        return Response(serializer.data)
