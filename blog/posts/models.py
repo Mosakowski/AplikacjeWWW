@@ -8,6 +8,7 @@ from django.db import models
 class Category(models.Model):
     name = models.CharField(max_length=60)
     description = models.TextField(default="brak")
+    id = models.AutoField(primary_key=True)
 
     class Meta:
         ordering = ['name']

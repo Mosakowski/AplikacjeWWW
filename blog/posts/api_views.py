@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -49,7 +50,8 @@ def category_view(request, pk):
     return Response(serializer.data)
 
 @api_view(['POST'])
-def category_add(request, data):
+def category_add(request):
+    data = request.data
     category = Category.objects.create(name=data['name'], description=data['description'])
     serializer = CategorySerializer(category)
     return Response(serializer.data)
@@ -81,15 +83,17 @@ class PostView(APIView):
         return Response(serializer.data)
 
 class PostAdd(APIView):
-    def add(self,request,data):
-        post = Post.objects.create(title=data['title'], text=data['text'], topic=data['topic'], slug=data['slug'],
+    def post(self,request):
+        data = request.data
+        post = Post.objects.create(title=data['title'], text=data['text'], topic_id=data['topic'], slug=data['slug'],
                                    created_at=datetime.datetime.now(), updated_at=datetime.datetime.now(),
-                                   created_by=data['created_by'])
+                                   created_by=request.user)
         serializer = PostModelSerializer(post)
         return Response(serializer.data)
 
-
+@permission_classes([IsAuthenticated])
 class PostDelete(APIView):
+    permission_classes = [IsAuthenticated]
     def delete(self,request,pk):
         post = Post.objects.get(title=pk)
         post.delete()
@@ -97,7 +101,24 @@ class PostDelete(APIView):
         return Response(serializer.data)
 
 class PostList(APIView):
-    def list(self, request):
+    def get(self, request):
         posts = Post.objects.all()
         serializer = PostModelSerializer(posts, many=True)
+        return Response(serializer.data)
+
+@permission_classes([IsAuthenticated])
+class UsersPosts(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        post = Post.objects.get(created_by=request.user)
+        serializer = PostModelSerializer(post)
+        return Response(serializer.data)
+
+@permission_classes([IsAuthenticated])
+class TopicCategory(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        data = request.data
+        topic = Topic.objects.get(category_id=data['category_id'])
+        serializer = TopicModelSerializer(topic)
         return Response(serializer.data)
