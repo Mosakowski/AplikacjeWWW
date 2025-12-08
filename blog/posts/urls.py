@@ -23,4 +23,5 @@ urlpatterns = [
     path('users/posts', UsersPosts.as_view()),
 
     path('categories/<id>/topics/', TopicCategory.as_view()),
+    path('topic/details/show', api_views.TopicDetailsShow.as_view()),
 ]

@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.contrib.auth.decorators import permission_required
 
 from .models import Category, Post, Topic
 from .serializers import PostModelSerializer, CategorySerializer, TopicModelSerializer
@@ -120,5 +122,13 @@ class TopicCategory(APIView):
     def get(self,request):
         data = request.data
         topic = Topic.objects.get(category_id=data['category_id'])
+        serializer = TopicModelSerializer(topic)
+        return Response(serializer.data)
+
+class TopicDetailsShow(APIView):
+    def get(self, request):
+        if not request.user.has_perm('posts.view_topic'):
+            raise PermissionDenied()
+        topic = Topic.objects.get()
         serializer = TopicModelSerializer(topic)
         return Response(serializer.data)
