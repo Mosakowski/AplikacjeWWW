@@ -1,0 +1,8 @@
+{% extends "posts\base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<p>Nazwa: {{ post.title }}</p>
+<p>tekst: {{ category.text }}</p>
+{% endblock %}

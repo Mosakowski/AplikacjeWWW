@@ -1,0 +1,12 @@
+{% extends "posts\base.html" %}
+
+{% block title %}Lista obiektów post{% endblock %}
+
+{% block content %}
+Lista post:
+{% for post in posts %}
+<p>Nazwa: {{ post.name }}</p>
+<p>Opis: {{ post.description }}</p>
+<hr>
+{% endfor %}
+{% endblock %}

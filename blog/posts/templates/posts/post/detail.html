@@ -1,0 +1,8 @@
+{% extends "posts\base.html" %}
+
+{% block title %}{{ topic.name }}{% endblock %}
+
+{% block content %}
+<p>Nazwa: {{ topic.title }}</p>
+<p>Opis: {{ topic.text }}</p>
+{% endblock %}

@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework.decorators import api_view
 from . import api_views
 from .api_views import UsersPosts, TopicCategory
+from . import views
 
 urlpatterns = [
     path('topic/list', api_views.topic_list),
@@ -24,4 +25,12 @@ urlpatterns = [
 
     path('categories/<id>/topics/', TopicCategory.as_view()),
     path('topic/details/show', api_views.TopicDetailsShow.as_view()),
+    #path("welcome", views.welcome_view),
+    path("categories", views.category_list),
+    path("category/<int:id>", views.category_detail),
+    path("topics", views.topic_list),
+    path("topic/<str:name>", views.topic_detail),
+    path("posts", views.post_list),
+    path("post/<str:name>", views.post_detail),
+    path("topic/detailed/<str:name>", views.topic_detail_more),
 ]
